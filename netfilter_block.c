@@ -18,20 +18,19 @@ void usage(){
 
 char* target;
 int vrfyPacket(unsigned char* buf,unsigned int size) {
-	char * hostPtr=0;
-	struct libnet_ipv4_hdr * ip = (struct libnet_ipv4_hdr *)buf;
-	struct libnet_tcp_hdr * tcp = (struct libnet_tcp_hdr *)(buf+ip->ip_hl*4);
+	char* hostPtr=0;
+	struct libnet_ipv4_hdr* ip = (struct libnet_ipv4_hdr *)buf;
+	struct libnet_tcp_hdr* tcp = (struct libnet_tcp_hdr *)(buf+ip->ip_hl*4);
 	int tcp_header_size = tcp->th_off*4;
 
-	if(size < tcp_header_size+ip->ip_hl*4+20)return 0;
+	if(size < tcp_header_size + ip->ip_hl*4 + 20)  return 0;
 
-	char * methodPtr=(char *)tcp+tcp_header_size;
+	char* methodPtr=(char *)tcp + tcp_header_size;
 
 	int tlen = strlen(target);
-	for(int i=0; i < size ; i++){
-		if(!memcmp(methodPtr+i,target,tlen)){
-			return 1;
-		}
+	for(int i=0; i < size - tcp_header_size - ip->ip_hl*4 - 15; i++)
+  {
+		if(!memcmp(methodPtr+i,target,tlen))  return 1;
 	}
 	return 0;
 }
